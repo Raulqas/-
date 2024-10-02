@@ -1,0 +1,111 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+struct Magazin 
+{
+    string name;
+    string marka;
+    string model;
+    string stoimost;
+};
+
+Magazin zap[100]; // Массив для хранения запчастей
+int count = 0;    // Счётчик запчастей
+
+int main() 
+{
+    ifstream fileIn("magazin.txt"); // Загрузка данных из файла
+    if (fileIn) 
+    {
+        while (fileIn >> zap[count].name >> zap[count].marka >> zap[count].model >> zap[count].stoimost) 
+        {
+            count++;
+        }
+        fileIn.close();
+    }
+
+    int choice;
+    do 
+    {
+        cout << "\n1. Список запчастей\n";
+        cout << "2. Добавить запчасть\n";
+        cout << "3. Удалить запчасть\n";
+        cout << "4. Запчасти для Lada Vesta\n";
+        cout << "5. Выход\n";
+        cout << "Введите выбор: ";
+        cin >> choice;
+
+        if (choice == 1) 
+        {
+            cout << "Список запчастей:\n";
+            for (int i = 0; i < count; i++) 
+            {
+                cout << i + 1 << ". Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
+                     << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
+            }
+        }
+        else if (choice == 2) 
+        {
+            if (count < 100) 
+            {
+                cout << "Введите наименование запчасти: ";
+                cin >> zap[count].name;
+                cout << "Введите марку: ";
+                cin >> zap[count].marka;
+                cout << "Введите модель: ";
+                cin >> zap[count].model;
+                cout << "Введите стоимость: ";
+                cin >> zap[count].stoimost;
+                count++;
+            } 
+            else 
+            {
+                cout << "Невозможно добавить больше запчастей.\n";
+            }
+        }
+        else if (choice == 3) 
+        {
+            int index;
+            cout << "Введите номер запчасти для удаления: ";
+            cin >> index;
+            index--;
+
+            if (index >= 0 && index < count) 
+            {
+                for (int i = index; i < count - 1; i++) 
+                {
+                    zap[i] = zap[i + 1];
+                }
+                count--;
+            } 
+            else 
+            {
+                cout << "Неверный номер.\n";
+            }
+        }
+        else if (choice == 4) 
+        {
+            cout << "Запчасти для Lada Vesta:\n";
+            for (int i = 0; i < count; i++) 
+            {
+                if (zap[i].marka == "Lada" && zap[i].model == "Vesta") 
+                {
+                    cout << "Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
+                         << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
+                }
+            }
+        }
+    } while (choice != 5);
+
+    ofstream fileOut("magazin.txt"); // Сохранение данных в файл
+    for (int i = 0; i < count; i++) 
+    {
+        fileOut << zap[i].name << " " << zap[i].marka << " " << zap[i].model << " " << zap[i].stoimost << "\n";
+    }
+    fileOut.close();
+
+    return 0;
+} 
