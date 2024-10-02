@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 
 using namespace std;
 
@@ -13,53 +12,58 @@ struct Magazin
     string stoimost;
 };
 
-vector<Magazin> zap;
+Magazin zap[100]; // Массив для хранения запчастей
+int count = 0;    // Счётчик запчастей
 
 void print_zap() 
 {
     cout << "Список запчастей:\n";
-    for (const auto& z : zap) 
+    for (int i = 0; i < count; i++) 
     {
-        cout << "Наименование: " << z.name << ", Марка: " << z.marka
-             << ", Модель: " << z.model << ", Стоимость: " << z.stoimost << "\n";
+        cout << "Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
+             << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
     }
 }
 
 void add_magazin() 
 {
-    if (zap.size() >= 100) 
+    if (count >= 100) 
     {
         cout << "Невозможно добавить больше запчастей, достигнут лимит.\n";
         return;
     }
 
-    Magazin newZap;
     cout << "Введите наименование запчасти: ";
-    cin >> newZap.name;
+    cin >> zap[count].name;
     cout << "Введите марку: ";
-    cin >> newZap.marka;
+    cin >> zap[count].marka;
     cout << "Введите модель: ";
-    cin >> newZap.model;
+    cin >> zap[count].model;
     cout << "Введите стоимость: ";
-    cin >> newZap.stoimost;
+    cin >> zap[count].stoimost;
 
-    zap.push_back(newZap);
+    count++;
 }
 
 void delete_magazina() 
 {
     int index;
-    cout << "Введите индекс запчасти для удаления: ";
+    cout << "Введите номер запчасти для удаления: ";
     cin >> index;
     index--;
 
-    if (index < 0 || static_cast<size_t>(index) >= zap.size()) 
+    if (index < 0 || index >= count) 
     {
-        cout << "Неверный индекс\n";
+        cout << "Неверный номер\n";
         return;
     }
 
-    zap.erase(zap.begin() + index);
+    for (int i = index; i < count - 1; i++) 
+    {
+        zap[i] = zap[i + 1];
+    }
+
+    count--;
 }
 
 void save_magazina_to_file() 
@@ -71,9 +75,9 @@ void save_magazina_to_file()
         return;
     }
 
-    for (const auto& z : zap) 
+    for (int i = 0; i < count; i++) 
     {
-        file << z.name << " " << z.marka << " " << z.model << " " << z.stoimost << "\n";
+        file << zap[i].name << " " << zap[i].marka << " " << zap[i].model << " " << zap[i].stoimost << "\n";
     }
 
     file.close();
@@ -88,11 +92,11 @@ void load_magazin_from_file()
         return;
     }
 
-    zap.clear();
-    Magazin temp;
-    while (file >> temp.name >> temp.marka >> temp.model >> temp.stoimost) 
+    count = 0;
+    while (file >> zap[count].name >> zap[count].marka >> zap[count].model >> zap[count].stoimost) 
     {
-        zap.push_back(temp);
+        count++;
+        if (count >= 100) break;
     }
 
     file.close();
@@ -101,12 +105,12 @@ void load_magazin_from_file()
 void dannie_vesta() 
 {
     cout << "Запчасти для Lada Vesta:\n";
-    for (const auto& z : zap) 
+    for (int i = 0; i < count; i++) 
     {
-        if (z.marka == "Lada" && z.model == "Vesta") 
+        if (zap[i].marka == "Lada" && zap[i].model == "Vesta") 
         {
-            cout << "Наименование: " << z.name << ", Марка: " << z.marka
-                 << ", Модель: " << z.model << ", Стоимость: " << z.stoimost << "\n";
+            cout << "Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
+                 << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
         }
     }
 }
