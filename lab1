@@ -15,138 +15,97 @@ struct Magazin
 Magazin zap[100]; // Массив для хранения запчастей
 int count = 0;    // Счётчик запчастей
 
-void print_zap() 
-{
-    cout << "Список запчастей:\n";
-    for (int i = 0; i < count; i++) 
-    {
-        cout << "Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
-             << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
-    }
-}
-
-void add_magazin() 
-{
-    if (count >= 100) 
-    {
-        cout << "Невозможно добавить больше запчастей, достигнут лимит.\n";
-        return;
-    }
-
-    cout << "Введите наименование запчасти: ";
-    cin >> zap[count].name;
-    cout << "Введите марку: ";
-    cin >> zap[count].marka;
-    cout << "Введите модель: ";
-    cin >> zap[count].model;
-    cout << "Введите стоимость: ";
-    cin >> zap[count].stoimost;
-
-    count++;
-}
-
-void delete_magazina() 
-{
-    int index;
-    cout << "Введите номер запчасти для удаления: ";
-    cin >> index;
-    index--;
-
-    if (index < 0 || index >= count) 
-    {
-        cout << "Неверный номер\n";
-        return;
-    }
-
-    for (int i = index; i < count - 1; i++) 
-    {
-        zap[i] = zap[i + 1];
-    }
-
-    count--;
-}
-
-void save_magazina_to_file() 
-{
-    ofstream file("magazin.txt");
-    if (!file) 
-    {
-        cout << "Ошибка при сохранении файла.\n";
-        return;
-    }
-
-    for (int i = 0; i < count; i++) 
-    {
-        file << zap[i].name << " " << zap[i].marka << " " << zap[i].model << " " << zap[i].stoimost << "\n";
-    }
-
-    file.close();
-}
-
-void load_magazin_from_file() 
-{
-    ifstream file("magazin.txt");
-    if (!file) 
-    {
-        cout << "Файл с запчастями не найден, загрузка пропущена.\n";
-        return;
-    }
-
-    count = 0;
-    while (file >> zap[count].name >> zap[count].marka >> zap[count].model >> zap[count].stoimost) 
-    {
-        count++;
-        if (count >= 100) break;
-    }
-
-    file.close();
-}
-
-void dannie_vesta() 
-{
-    cout << "Запчасти для Lada Vesta:\n";
-    for (int i = 0; i < count; i++) 
-    {
-        if (zap[i].marka == "Lada" && zap[i].model == "Vesta") 
-        {
-            cout << "Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
-                 << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
-        }
-    }
-}
-
 int main() 
 {
-    load_magazin_from_file();
-    int choice;
+    ifstream fileIn("magazin.txt"); // Загрузка данных из файла
+    if (fileIn) 
+    {
+        while (fileIn >> zap[count].name >> zap[count].marka >> zap[count].model >> zap[count].stoimost) 
+        {
+            count++;
+        }
+        fileIn.close();
+    }
 
+    int choice;
     do 
     {
         cout << "\n1. Список запчастей\n";
         cout << "2. Добавить запчасть\n";
         cout << "3. Удалить запчасть\n";
         cout << "4. Запчасти для Lada Vesta\n";
-        cout << "5. Выход\n\n";
+        cout << "5. Выход\n";
         cout << "Введите выбор: ";
         cin >> choice;
 
-        switch (choice) 
+        if (choice == 1) 
         {
-            case 1:
-                print_zap();
-                break;
-            case 2:
-                add_magazin();
-                break;
-            case 3:
-                delete_magazina();
-                break;
-            case 4:
-                dannie_vesta();
-                break;
+            cout << "Список запчастей:\n";
+            for (int i = 0; i < count; i++) 
+            {
+                cout << i + 1 << ". Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
+                     << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
+            }
+        }
+        else if (choice == 2) 
+        {
+            if (count < 100) 
+            {
+                cout << "Введите наименование запчасти: ";
+                cin >> zap[count].name;
+                cout << "Введите марку: ";
+                cin >> zap[count].marka;
+                cout << "Введите модель: ";
+                cin >> zap[count].model;
+                cout << "Введите стоимость: ";
+                cin >> zap[count].stoimost;
+                count++;
+            } 
+            else 
+            {
+                cout << "Невозможно добавить больше запчастей.\n";
+            }
+        }
+        else if (choice == 3) 
+        {
+            int index;
+            cout << "Введите номер запчасти для удаления: ";
+            cin >> index;
+            index--;
+
+            if (index >= 0 && index < count) 
+            {
+                for (int i = index; i < count - 1; i++) 
+                {
+                    zap[i] = zap[i + 1];
+                }
+                count--;
+            } 
+            else 
+            {
+                cout << "Неверный номер.\n";
+            }
+        }
+        else if (choice == 4) 
+        {
+            cout << "Запчасти для Lada Vesta:\n";
+            for (int i = 0; i < count; i++) 
+            {
+                if (zap[i].marka == "Lada" && zap[i].model == "Vesta") 
+                {
+                    cout << "Наименование: " << zap[i].name << ", Марка: " << zap[i].marka
+                         << ", Модель: " << zap[i].model << ", Стоимость: " << zap[i].stoimost << "\n";
+                }
+            }
         }
     } while (choice != 5);
 
-    save_magazina_to_file();
+    ofstream fileOut("magazin.txt"); // Сохранение данных в файл
+    for (int i = 0; i < count; i++) 
+    {
+        fileOut << zap[i].name << " " << zap[i].marka << " " << zap[i].model << " " << zap[i].stoimost << "\n";
+    }
+    fileOut.close();
+
     return 0;
 }
